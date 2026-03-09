@@ -1,0 +1,116 @@
+<%- include('../partials/header') %>
+    <%- include('../partials/requireAuth') %>
+
+        <div class="page-header">
+            <div>
+                <h1>🚙 Car Fleet</h1>
+                <p>Manage all vehicles in the system</p>
+            </div>
+            <a href="/cars/new" class="btn btn-primary admin-only" style="display:none">＋ Add New Car</a>
+        </div>
+
+        <% const available=cars.filter(c=> c.status === 'available').length;
+            const rented = cars.filter(c => c.status === 'rented').length;
+            const maintenance = cars.filter(c => c.status === 'maintenance').length;
+            %>
+
+            <div class="stats">
+                <div class="stat-card accent">
+                    <div class="label">Total Cars</div>
+                    <div class="value">
+                        <%= cars.length %>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="label">Available</div>
+                    <div class="value" style="color:var(--success)">
+                        <%= available %>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="label">Rented</div>
+                    <div class="value" style="color:var(--accent2)">
+                        <%= rented %>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="label">Maintenance</div>
+                    <div class="value" style="color:var(--warning)">
+                        <%= maintenance %>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <% if (cars.length===0) { %>
+                    <div class="empty-state">
+                        <div class="icon">🚗</div>
+                        <p>No cars in the fleet yet.</p>
+                        <a href="/cars/new" class="btn btn-primary">Add First Car</a>
+                    </div>
+                    <% } else { %>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Car Number</th>
+                                    <th>Capacity</th>
+                                    <th>Status</th>
+                                    <th>Price / Day</th>
+                                    <th>Features</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% cars.forEach(car=> { %>
+                                    <tr>
+                                        <td><strong>
+                                                <%= car.carNumber %>
+                                            </strong></td>
+                                        <td>
+                                            <%= car.capacity %> seats
+                                        </td>
+                                        <td>
+                                            <span class="badge badge-<%= car.status %>">
+                                                <%= car.status %>
+                                            </span>
+                                        </td>
+                                        <td>₫<%= car.pricePerDay.toLocaleString('vi-VN') %>
+                                        </td>
+                                        <td>
+                                            <% car.features.forEach(f=> { %>
+                                                <span class="feature-tag">
+                                                    <%= f %>
+                                                </span>
+                                                <% }) %>
+                                        </td>
+                                        <td>
+                                            <div class="td-actions admin-only" style="display:none">
+                                                <a href="/cars/<%= car._id %>/edit" class="btn btn-warning btn-sm">✏️
+                                                    Edit</a>
+                                                <form method="POST" action="/cars/<%= car._id %>?_method=DELETE"
+                                                    onsubmit="return confirm('Delete this car?')">
+                                                    <input type="hidden" name="_method" value="DELETE" />
+                                                    <button type="submit" class="btn btn-danger btn-sm">🗑
+                                                        Delete</button>
+                                                </form>
+                                            </div>
+                                            <span class="user-only" style="color:var(--muted);font-size:.8rem">—</span>
+                                        </td>
+                                    </tr>
+                                    <% }) %>
+                            </tbody>
+                        </table>
+                        <% } %>
+            </div>
+
+            <script>
+                (function () {
+                    const u = JSON.parse(localStorage.getItem('user') || '{}');
+                    if (u.role === 'admin') {
+                        document.querySelectorAll('.admin-only').forEach(el => el.style.display = '');
+                        document.querySelectorAll('.user-only').forEach(el => el.style.display = 'none');
+                    }
+                })();
+            </script>
+
+            <%- include('../partials/footer') %>

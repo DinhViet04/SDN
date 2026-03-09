@@ -1,0 +1,74 @@
+<%- include('../partials/header') %>
+
+    <div class="page-header">
+        <div>
+            <h1>
+                <%= car ? '✏️ Edit Car' : '➕ Add New Car' %>
+            </h1>
+            <p>
+                <%= car ? 'Update the details below' : 'Fill in the car information below' %>
+            </p>
+        </div>
+        <a href="/cars" class="btn btn-ghost">← Back to Cars</a>
+    </div>
+
+    <div class="card form-card" style="padding: 2rem;">
+        <% if (typeof error !=='undefined' && error) { %>
+            <div class="alert alert-danger">⚠️ <%= error %>
+            </div>
+            <% } %>
+
+                <form method="POST" action="<%= car ? '/cars/' + car._id : '/cars' %>" class="form-grid">
+                    <% if (car) { %>
+                        <input type="hidden" name="_method" value="PUT" />
+                        <% } %>
+
+                            <div class="form-group">
+                                <label for="carNumber">Car Number / License Plate</label>
+                                <input type="text" id="carNumber" name="carNumber"
+                                    value="<%= car ? car.carNumber : '' %>" placeholder="e.g. 51A-12345" required />
+                            </div>
+
+                            <div class="form-group">
+                                <label for="capacity">Seating Capacity</label>
+                                <input type="number" id="capacity" name="capacity"
+                                    value="<%= car ? car.capacity : '' %>" placeholder="e.g. 7" min="1" required />
+                            </div>
+
+                            <div class="form-group">
+                                <label for="status">Status</label>
+                                <select id="status" name="status">
+                                    <option value="available" <%=(!car || car.status==='available' ) ? 'selected' : ''
+                                        %>>Available</option>
+                                    <option value="rented" <%=(car && car.status==='rented' ) ? 'selected' : '' %>
+                                        >Rented</option>
+                                    <option value="maintenance" <%=(car && car.status==='maintenance' ) ? 'selected'
+                                        : '' %>>Maintenance</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="pricePerDay">Price Per Day (₫)</label>
+                                <input type="number" id="pricePerDay" name="pricePerDay"
+                                    value="<%= car ? car.pricePerDay : '' %>" placeholder="e.g. 500000" min="0"
+                                    required />
+                            </div>
+
+                            <div class="form-group">
+                                <label for="features">Features</label>
+                                <input type="text" id="features" name="features"
+                                    value="<%= car ? car.features.join(', ') : '' %>"
+                                    placeholder="e.g. automatic, air-conditioner, GPS" />
+                                <span class="hint">Comma-separated list of features</span>
+                            </div>
+
+                            <div class="form-actions">
+                                <button type="submit" class="btn btn-primary">
+                                    <%= car ? '💾 Save Changes' : '🚗 Add Car' %>
+                                </button>
+                                <a href="/cars" class="btn btn-ghost">Cancel</a>
+                            </div>
+                </form>
+    </div>
+
+    <%- include('../partials/footer') %>

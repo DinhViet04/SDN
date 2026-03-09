@@ -1,0 +1,151 @@
+<%- include('../partials/header') %>
+    <%- include('../partials/requireAuth') %>
+
+        <div class="page-header">
+            <div>
+                <h1>📋 Bookings</h1>
+                <p id="bookingSubtitle">Loading...</p>
+            </div>
+            <a href="/bookings/new" class="btn btn-primary">＋ New Booking</a>
+        </div>
+
+        <!-- Stats row -->
+        <div class="stats" id="statsRow" style="display:none">
+            <div class="stat-card accent">
+                <div class="label">Total Bookings</div>
+                <div class="value" id="statTotal">—</div>
+            </div>
+            <div class="stat-card">
+                <div class="label">Total Amount</div>
+                <div class="value" id="statRevenue" style="color:var(--success);font-size:1.4rem">—</div>
+            </div>
+        </div>
+
+        <!-- Loading state -->
+        <div id="loadingState" class="empty-state">
+            <div class="icon">⏳</div>
+            <p>Đang tải dữ liệu...</p>
+        </div>
+
+        <!-- Error state -->
+        <div id="errorState" class="empty-state" style="display:none">
+            <div class="icon">⚠️</div>
+            <p id="errorMsg">Không thể tải bookings.</p>
+        </div>
+
+        <!-- Table -->
+        <div class="card" id="tableCard" style="display:none">
+            <div id="emptyState" class="empty-state" style="display:none">
+                <div class="icon">📋</div>
+                <p>Chưa có booking nào.</p>
+                <a href="/bookings/new" class="btn btn-primary">Tạo Booking Đầu Tiên</a>
+            </div>
+            <table id="bookingsTable" style="display:none">
+                <thead>
+                    <tr>
+                        <th class="admin-col" style="display:none">👤 Customer / User</th>
+                        <th>Customer</th>
+                        <th>Car Number</th>
+                        <th>Start Date</th>
+                        <th>End Date</th>
+                        <th>Days</th>
+                        <th>Total Amount</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="bookingsBody"></tbody>
+            </table>
+        </div>
+
+        <script>
+            (async function () {
+                const token = localStorage.getItem('token');
+                const user = JSON.parse(localStorage.getItem('user') || '{}');
+                const isAdmin = user.role === 'admin';
+
+                // Update subtitle
+                document.getElementById('bookingSubtitle').textContent =
+                    isAdmin ? 'Tất cả bookings trong hệ thống' : 'Bookings của bạn';
+
+                // Show admin-only column header
+                if (isAdmin) {
+                    document.querySelectorAll('.admin-col').forEach(el => el.style.display = '');
+                }
+
+                try {
+                    const res = await fetch('/api/bookings', {
+                        headers: { 'Authorization': 'Bearer ' + token }
+                    });
+
+                    if (res.status === 401) {
+                        localStorage.clear();
+                        return window.location.replace('/auth/login');
+                    }
+
+                    const bookings = await res.json();
+
+                    document.getElementById('loadingState').style.display = 'none';
+                    document.getElementById('tableCard').style.display = '';
+                    document.getElementById('statsRow').style.display = '';
+
+                    // Stats
+                    const totalAmt = bookings.reduce((s, b) => s + b.totalAmount, 0);
+                    document.getElementById('statTotal').textContent = bookings.length;
+                    document.getElementById('statRevenue').textContent =
+                        '₫' + totalAmt.toLocaleString('vi-VN');
+
+                    if (bookings.length === 0) {
+                        document.getElementById('emptyState').style.display = '';
+                        return;
+                    }
+
+                    document.getElementById('bookingsTable').style.display = '';
+                    const tbody = document.getElementById('bookingsBody');
+
+                    bookings.forEach(b => {
+                        const start = new Date(b.startDate);
+                        const end = new Date(b.endDate);
+                        const days = Math.ceil((end - start) / 86400000);
+                        const fmtDate = d => d.toLocaleDateString('vi-VN');
+
+                        // User info for admin
+                        const userInfo = b.userId
+                            ? (b.userId.username || '—') + ' <span style="color:var(--muted);font-size:.78rem">(' + (b.userId.email || '') + ')</span>'
+                            : '<span style="color:var(--muted)">legacy</span>';
+
+                        const adminCell = isAdmin
+                            ? `<td class="admin-col">${userInfo}</td>`
+                            : '';
+
+                        tbody.insertAdjacentHTML('beforeend', `
+                <tr>
+                    ${adminCell}
+                    <td><strong>${b.customerName}</strong></td>
+                    <td>${b.carNumber}</td>
+                    <td>${fmtDate(start)}</td>
+                    <td>${fmtDate(end)}</td>
+                    <td>${days} ngày</td>
+                    <td><span class="amount">₫${b.totalAmount.toLocaleString('vi-VN')}</span></td>
+                    <td>
+                        <div class="td-actions">
+                            <a href="/bookings/${b._id}/edit" class="btn btn-warning btn-sm">✏️ Edit</a>
+                            <form method="POST" action="/bookings/${b._id}?_method=DELETE"
+                                onsubmit="return confirm('Delete this booking?')">
+                                <input type="hidden" name="_method" value="DELETE"/>
+                                <button type="submit" class="btn btn-danger btn-sm">🗑 Delete</button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+            `);
+                    });
+
+                } catch (err) {
+                    document.getElementById('loadingState').style.display = 'none';
+                    document.getElementById('errorState').style.display = '';
+                    document.getElementById('errorMsg').textContent = 'Lỗi: ' + err.message;
+                }
+            })();
+        </script>
+
+        <%- include('../partials/footer') %>

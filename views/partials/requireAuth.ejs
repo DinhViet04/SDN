@@ -1,0 +1,11 @@
+<%# Include this partial at the top of any page that requires authentication %>
+    <script>
+        (function () {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                // Lưu lại trang hiện tại để redirect sau khi login
+                localStorage.setItem('redirectAfterLogin', window.location.pathname);
+                window.location.replace('/auth/login');
+            }
+        })();
+    </script>
