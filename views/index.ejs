@@ -1,51 +1,318 @@
 <%- include('partials/header', { title: 'Home' }) %>
-    <%- include('partials/requireAuth') %>
+<%- include('partials/requireAuth') %>
 
-        <div style="position:relative; margin-bottom: 4rem;">
-            <!-- Hero content -->
-            <div class="hero" style="position:relative; overflow:hidden; border-radius: var(--radius); padding: 5rem 2rem; text-align:center; background: rgba(30, 41, 59, 0.4); border: 1px solid var(--border); box-shadow: 0 20px 40px rgba(0,0,0,0.2); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);">
-                <!-- Animated Background Blobs -->
-                <div style="position:absolute; top:-20%; left:-10%; width:400px; height:400px; background:var(--accent); filter:blur(100px); opacity:0.15; border-radius:50%; z-index:0; animation: float 6s ease-in-out infinite;"></div>
-                <div style="position:absolute; bottom:-20%; right:-10%; width:300px; height:300px; background:var(--accent2); filter:blur(100px); opacity:0.15; border-radius:50%; z-index:0; animation: float 8s ease-in-out infinite reverse;"></div>
-                
-                <style>
-                    @keyframes float {
-                        0% { transform: translateY(0px) rotate(0deg); }
-                        50% { transform: translateY(30px) rotate(10deg); }
-                        100% { transform: translateY(0px) rotate(0deg); }
-                    }
-                </style>
-                
-                <div style="position:relative; z-index:1;">
-                    <div style="font-size:4rem; margin-bottom:1rem; text-shadow: 0 10px 20px rgba(0,0,0,0.3);">🚀</div>
-                    <h1 style="font-size:3.5rem; font-weight:800; margin-bottom:1rem; letter-spacing:-0.02em; background: -webkit-linear-gradient(135deg, #60a5fa 0%, #d8b4fe 100%); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;">Viet Car Rental</h1>
-                    <p style="color:var(--text); font-size: 1.15rem; font-weight:300; margin-bottom:2.5rem; max-width:600px; margin-left:auto; margin-right:auto; opacity:0.9;">Hệ thống cho thuê xe cao cấp. Trải nghiệm hành trình của bạn với những người đồng hành tuyệt vời nhất.</p>
-                    <div style="display:flex; gap:1rem; justify-content:center; flex-wrap:wrap;">
-                        <a href="/cars" class="btn btn-primary" style="padding: 0.8rem 1.8rem; font-size: 1.05rem; box-shadow: 0 10px 20px -10px var(--accent); transition: all 0.3s; gap:0.5rem;">🚙 Khám phá xe</a>
-                        <a href="/bookings" class="btn btn-ghost" style="padding: 0.8rem 1.8rem; font-size: 1.05rem; background: rgba(255,255,255,0.05); transition: all 0.3s;">📋 Lịch sử đặt xe</a>
-                    </div>
+<style>
+    .hero-section {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 4rem;
+        margin-bottom: 5rem;
+        padding: 4.5rem 4rem;
+        background: linear-gradient(135deg, rgba(30, 41, 59, 0.5) 0%, rgba(15, 23, 42, 0.7) 100%);
+        border-radius: 28px;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        box-shadow: 0 30px 60px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(24px);
+        -webkit-backdrop-filter: blur(24px);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .hero-bg-orb-1 {
+        position: absolute;
+        top: -30%;
+        left: -10%;
+        width: 600px;
+        height: 600px;
+        background: var(--accent);
+        filter: blur(140px);
+        opacity: 0.15;
+        border-radius: 50%;
+        z-index: 0;
+        animation: floatOrb 12s ease-in-out infinite;
+    }
+
+    .hero-bg-orb-2 {
+        position: absolute;
+        bottom: -30%;
+        right: -10%;
+        width: 500px;
+        height: 500px;
+        background: var(--accent2);
+        filter: blur(120px);
+        opacity: 0.15;
+        border-radius: 50%;
+        z-index: 0;
+        animation: floatOrb 15s ease-in-out infinite reverse;
+    }
+
+    @keyframes floatOrb {
+        0% { transform: translateY(0px) scale(1); }
+        50% { transform: translateY(40px) scale(1.05); }
+        100% { transform: translateY(0px) scale(1); }
+    }
+
+    .hero-left {
+        flex: 1;
+        z-index: 1;
+        max-width: 600px;
+    }
+
+    .hero-right {
+        flex: 1;
+        position: relative;
+        height: 480px;
+        z-index: 1;
+        display: none;
+    }
+
+    @media (min-width: 992px) {
+        .hero-right { display: block; }
+    }
+
+    @media (max-width: 991px) {
+        .hero-section {
+            flex-direction: column;
+            text-align: center;
+            padding: 3rem 1.5rem;
+        }
+        .hero-left { margin: 0 auto; }
+        .hero-buttons { justify-content: center; }
+        .hero-stats { justify-content: center; }
+    }
+
+    .hero-title {
+        font-size: 4.5rem;
+        line-height: 1.1;
+        font-weight: 800;
+        margin-bottom: 1.5rem;
+        letter-spacing: -0.03em;
+    }
+
+    .gradient-text {
+        background: -webkit-linear-gradient(135deg, #60a5fa 0%, #d8b4fe 100%);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .hero-desc {
+        color: var(--muted);
+        font-size: 1.15rem;
+        line-height: 1.7;
+        margin-bottom: 2.5rem;
+    }
+
+    .hero-buttons {
+        display: flex;
+        gap: 1rem;
+        align-items: center;
+        flex-wrap: wrap;
+    }
+
+    .btn-glow {
+        box-shadow: 0 10px 25px -5px rgba(59, 130, 246, 0.4);
+        border-radius: 12px;
+        padding: 0.9rem 2rem;
+        font-size: 1.05rem;
+        transition: all 0.3s;
+    }
+
+    .btn-glow:hover {
+        box-shadow: 0 15px 35px -5px rgba(59, 130, 246, 0.6);
+        transform: translateY(-2px);
+    }
+
+    .btn-outline-glass {
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        color: white;
+        border-radius: 12px;
+        padding: 0.9rem 2rem;
+        font-size: 1.05rem;
+        transition: all 0.3s;
+    }
+
+    .btn-outline-glass:hover {
+        background: rgba(255, 255, 255, 0.08);
+        border-color: rgba(255, 255, 255, 0.2);
+    }
+
+    .hero-stats {
+        display: flex;
+        gap: 3rem;
+        margin-top: 3.5rem;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        padding-top: 2.5rem;
+    }
+
+    .stat-item .val {
+        font-size: 2.2rem;
+        font-weight: 800;
+        color: white;
+        line-height: 1;
+        margin-bottom: 0.2rem;
+    }
+
+    .stat-item .lbl {
+        font-size: 0.9rem;
+        color: var(--muted);
+        font-weight: 500;
+    }
+
+    /* Mock Cards in hero-right */
+    .mock-card {
+        background: rgba(30, 41, 59, 0.6);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 24px;
+        padding: 1.75rem;
+        box-shadow: 0 24px 48px rgba(0, 0, 0, 0.4);
+        position: absolute;
+    }
+
+    .mock-card-1 {
+        width: 300px;
+        top: 20px;
+        right: 0;
+        z-index: 2;
+        animation: floatMock1 8s ease-in-out infinite;
+    }
+
+    .mock-card-2 {
+        width: 280px;
+        bottom: 20px;
+        left: 0;
+        z-index: 1;
+        animation: floatMock2 9s ease-in-out infinite reverse;
+    }
+
+    @keyframes floatMock1 {
+        0% { transform: translateY(0px) rotate(4deg); }
+        50% { transform: translateY(-15px) rotate(5deg); }
+        100% { transform: translateY(0px) rotate(4deg); }
+    }
+
+    @keyframes floatMock2 {
+        0% { transform: translateY(0px) rotate(-4deg); }
+        50% { transform: translateY(15px) rotate(-3deg); }
+        100% { transform: translateY(0px) rotate(-4deg); }
+    }
+</style>
+
+<div class="hero-section">
+    <div class="hero-bg-orb-1"></div>
+    <div class="hero-bg-orb-2"></div>
+
+    <div class="hero-left">
+        <div style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1.25rem; background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.2); border-radius: 999px; color: #60a5fa; font-size: 0.85rem; font-weight: 600; margin-bottom: 1.5rem; text-transform: uppercase; letter-spacing: 0.05em;">
+            <span style="font-size: 1rem;">✨</span> Nền Tảng Thuê Xe Hàng Đầu
+        </div>
+        
+        <h1 class="hero-title">
+            Hành Trình Mới <br>
+            <span class="gradient-text">Cùng Viet Car</span>
+        </h1>
+        
+        <p class="hero-desc">
+            Trải nghiệm dịch vụ thuê xe tự lái và có tài xế cao cấp. Đặt xe nhanh chóng, giá cả minh bạch cùng dịch vụ chăm sóc khách hàng 24/7 chuyên nghiệp.
+        </p>
+        
+        <div class="hero-buttons">
+            <a href="/cars" class="btn btn-primary btn-glow">🚙 Bắt Đầu Khám Phá</a>
+            <a href="/bookings" class="btn btn-ghost btn-outline-glass">📋 Lịch Sử Đặt Xe</a>
+        </div>
+
+        <div class="hero-stats">
+            <div class="stat-item">
+                <div class="val">50+</div>
+                <div class="lbl">Dòng xe cao cấp</div>
+            </div>
+            <div class="stat-item">
+                <div class="val">1k+</div>
+                <div class="lbl">Khách hàng</div>
+            </div>
+            <div class="stat-item">
+                <div class="val">4.9</div>
+                <div class="lbl">Đánh giá sao</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="hero-right">
+        <!-- Mock Card 1: Car Info -->
+        <div class="mock-card mock-card-1">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.25rem;">
+                <span style="background: rgba(16, 185, 129, 0.15); color: #10b981; padding: 0.35rem 0.85rem; border-radius: 999px; font-size: 0.75rem; font-weight: 700;">SẴN SÀNG</span>
+                <span style="color: var(--muted); font-size: 0.85rem;">Mới cập nhật</span>
+            </div>
+            <div style="font-size: 1.35rem; font-weight: 700; color: white; margin-bottom: 0.2rem;">VinFast VF8 Plus</div>
+            <div style="color: var(--muted); font-size: 0.9rem; margin-bottom: 1rem;">SUV Điện Cao Cấp</div>
+            <div style="font-size: 1.8rem; font-weight: 800; color: white; display: flex; align-items: baseline; gap: 0.2rem;">
+                ₫1.300k <span style="font-size: 0.9rem; color: var(--muted); font-weight: 500;">/ ngày</span>
+            </div>
+            <div style="display: flex; gap: 0.5rem; margin-top: 1.25rem;">
+                <span style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 0.4rem 0.8rem; border-radius: 8px; font-size: 0.8rem; color: var(--text);">🚙 5 Chỗ</span>
+                <span style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 0.4rem 0.8rem; border-radius: 8px; font-size: 0.8rem; color: var(--text);">🔋 Điện</span>
+            </div>
+        </div>
+        
+        <!-- Mock Card 2: Booking Success -->
+        <div class="mock-card mock-card-2">
+            <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1.25rem;">
+                <div style="width: 44px; height: 44px; border-radius: 50%; background: linear-gradient(135deg, #a78bfa, #6c63ff); display: flex; align-items: center; justify-content: center; font-size: 1.25rem; box-shadow: 0 4px 10px rgba(108, 99, 255, 0.4);">
+                    👨‍💼
+                </div>
+                <div>
+                    <div style="font-size: 0.95rem; font-weight: 700; color: white;">Trần Nam Phong</div>
+                    <div style="font-size: 0.8rem; color: var(--muted);">Chuyến đi 3 ngày</div>
                 </div>
             </div>
-        </div>
-
-        <!-- Features Section -->
-        <h2 style="text-align:center; font-size:1.8rem; margin-bottom:2rem; font-weight:700;">Dịch vụ nổi bật</h2>
-        <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; margin-bottom: 4rem;">
-            <div class="stat-card" style="text-align:center;">
-                <div style="font-size:2.5rem; margin-bottom:1rem;">⚡</div>
-                <h3 style="font-size:1.2rem; margin-bottom:0.5rem; font-weight:600; color:var(--text);">Đặt xe siêu tốc</h3>
-                <p style="color:var(--muted); font-size:0.9rem; line-height:1.5;">Thủ tục trực tuyến chỉ với vài thao tác. Tiết kiệm thời gian, nhận xe ngay.</p>
+            
+            <div style="margin-bottom: 1rem;">
+                <div style="display: flex; justify-content: space-between; font-size: 0.85rem; margin-bottom: 0.5rem;">
+                    <span style="color: var(--muted);">Xe thuê:</span>
+                    <span style="color: white; font-weight: 600;">Mazda CX-5</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; font-size: 0.85rem;">
+                    <span style="color: var(--muted);">Thanh toán:</span>
+                    <span style="color: var(--accent2); font-weight: 700;">Đã xác nhận</span>
+                </div>
             </div>
-            <div class="stat-card" style="text-align:center; border-color: rgba(139, 92, 246, 0.3);">
-                <div style="font-size:2.5rem; margin-bottom:1rem;">🛡️</div>
-                <h3 style="font-size:1.2rem; margin-bottom:0.5rem; font-weight:600; color:var(--text);">An toàn tuyệt đối</h3>
-                <p style="color:var(--muted); font-size:0.9rem; line-height:1.5;">100% xe được bảo dưỡng và kiểm định định kỳ, sẵn sàng phục vụ hành trình dài.</p>
-            </div>
-            <div class="stat-card" style="text-align:center;">
-                <div style="font-size:2.5rem; margin-bottom:1rem;">💰</div>
-                <h3 style="font-size:1.2rem; margin-bottom:0.5rem; font-weight:600; color:var(--text);">Giá cả minh bạch</h3>
-                <p style="color:var(--muted); font-size:0.9rem; line-height:1.5;">Cập nhật giá thuê theo ngày rõ ràng, không có bất kỳ chi phí ẩn nào khác.</p>
+            
+            <div style="background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.2); color: #10b981; padding: 0.75rem; border-radius: 10px; text-align: center; font-size: 0.85rem; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
+                <span style="font-size: 1rem;">✅</span> Đặt xe thành công
             </div>
         </div>
+    </div>
+</div>
 
-        <%- include('partials/footer') %>
+<!-- Features Section -->
+<div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 2rem;">
+    <div>
+        <h2 style="font-size: 2rem; font-weight: 800; margin-bottom: 0.5rem; color: white;">Dịch Vụ Nổi Bật</h2>
+        <p style="color: var(--muted); font-size: 1rem;">Tại sao nên chọn Viet Car Rental cho hành trình của bạn?</p>
+    </div>
+</div>
+
+<div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; margin-bottom: 5rem;">
+    <div class="stat-card" style="padding: 2.5rem 2rem;">
+        <div style="width: 60px; height: 60px; border-radius: 16px; background: rgba(59, 130, 246, 0.1); display: flex; align-items: center; justify-content: center; font-size: 2rem; margin-bottom: 1.5rem; border: 1px solid rgba(59, 130, 246, 0.2);">⚡</div>
+        <h3 style="font-size:1.25rem; margin-bottom:0.75rem; font-weight:700; color:white;">Trải Nghiệm Tốc Độ</h3>
+        <p style="color:var(--muted); font-size:0.95rem; line-height:1.6;">Giao diện tối ưu, thao tác đặt xe mượt mà. Hoàn tất toàn bộ quy trình thuê xe chỉ trong vòng 3 phút.</p>
+    </div>
+    <div class="stat-card" style="padding: 2.5rem 2rem; border-color: rgba(139, 92, 246, 0.3); background: rgba(139, 92, 246, 0.03);">
+        <div style="width: 60px; height: 60px; border-radius: 16px; background: rgba(139, 92, 246, 0.1); display: flex; align-items: center; justify-content: center; font-size: 2rem; margin-bottom: 1.5rem; border: 1px solid rgba(139, 92, 246, 0.2);">🛡️</div>
+        <h3 style="font-size:1.25rem; margin-bottom:0.75rem; font-weight:700; color:white;">An Tâm Hành Trình</h3>
+        <p style="color:var(--muted); font-size:0.95rem; line-height:1.6;">100% xe được thẩm định và bảo dưỡng định kỳ tại gara chuyên nghiệp, kèm bảo hiểm toàn diện.</p>
+    </div>
+    <div class="stat-card" style="padding: 2.5rem 2rem;">
+        <div style="width: 60px; height: 60px; border-radius: 16px; background: rgba(16, 185, 129, 0.1); display: flex; align-items: center; justify-content: center; font-size: 2rem; margin-bottom: 1.5rem; border: 1px solid rgba(16, 185, 129, 0.2);">💎</div>
+        <h3 style="font-size:1.25rem; margin-bottom:0.75rem; font-weight:700; color:white;">Đẳng Cấp 5 Sao</h3>
+        <p style="color:var(--muted); font-size:0.95rem; line-height:1.6;">Không chỉ là phương tiện di chuyển, đó là phong cách sống. Trải nghiệm các mẫu xe đời mới sang trọng.</p>
+    </div>
+</div>
+
+<%- include('partials/footer') %>
