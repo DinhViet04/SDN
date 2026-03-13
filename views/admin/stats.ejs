@@ -1,0 +1,125 @@
+<%- include('../partials/header', { title: 'Thống kê' }) %>
+<%- include('../partials/requireAuth') %>
+
+<script>
+    // Admin-only guard
+    (function () {
+        const u = JSON.parse(localStorage.getItem('user') || '{}');
+        if (u.role !== 'admin') window.location.replace('/');
+    })();
+</script>
+
+<div class="page-header">
+    <div>
+        <h1>📊 Thống kê Hệ thống</h1>
+        <p>Tổng quan về người dùng, xe và doanh thu</p>
+    </div>
+</div>
+
+<!-- Alert box -->
+<div id="alertBox" class="alert" style="display:none"></div>
+
+<!-- Loading -->
+<div id="loadingState" class="empty-state">
+    <div class="icon">⏳</div>
+    <p>Đang tải dữ liệu thống kê...</p>
+</div>
+
+<!-- Dashboard Stats -->
+<div id="dashboard" style="display:none">
+    <h2 style="margin-bottom: 1rem; color: var(--accent2);">👥 Người dùng</h2>
+    <div class="stats">
+        <div class="stat-card">
+            <div class="label">Tổng số người dùng</div>
+            <div class="value" id="statUsersTotal">—</div>
+        </div>
+        <div class="stat-card">
+            <div class="label">Quản trị viên</div>
+            <div class="value" id="statAdmins" style="color:var(--accent2)">—</div>
+        </div>
+    </div>
+
+    <h2 style="margin-bottom: 1rem; margin-top: 2rem; color: var(--accent2);">🚗 Xe cho thuê</h2>
+    <div class="stats">
+        <div class="stat-card">
+            <div class="label">Tổng số xe</div>
+            <div class="value" id="statCarsTotal">—</div>
+        </div>
+        <div class="stat-card">
+            <div class="label">Sẵn sàng</div>
+            <div class="value" id="statCarsAvailable" style="color:var(--success)">—</div>
+        </div>
+        <div class="stat-card">
+            <div class="label">Đang thuê</div>
+            <div class="value" id="statCarsRented" style="color:var(--warning)">—</div>
+        </div>
+    </div>
+
+    <h2 style="margin-bottom: 1rem; margin-top: 2rem; color: var(--accent2);">💰 Doanh thu & Đặt xe</h2>
+    <div class="stats">
+        <div class="stat-card accent">
+            <div class="label">Tổng số lượt đặt chỗ</div>
+            <div class="value" id="statBookingsTotal">—</div>
+        </div>
+        <div class="stat-card accent" style="border-color: var(--success);">
+            <div class="label">Tổng doanh thu</div>
+            <div class="value" id="statRevenue" style="color:var(--success)">—</div>
+        </div>
+    </div>
+</div>
+
+<script>
+    (async function () {
+        const token = localStorage.getItem('token');
+        
+        function showAlert(msg, type = 'danger') {
+            const box = document.getElementById('alertBox');
+            box.textContent = msg;
+            box.className = 'alert alert-' + type;
+            box.style.display = '';
+            setTimeout(() => box.style.display = 'none', 4000);
+        }
+
+        async function loadStats() {
+            try {
+                const res = await fetch('/api/admin/stats', {
+                    headers: { 'Authorization': 'Bearer ' + token }
+                });
+                if (res.status === 401) { localStorage.clear(); return window.location.replace('/auth/login'); }
+                if (res.status === 403) return window.location.replace('/');
+                
+                if (!res.ok) {
+                    const data = await res.json();
+                    throw new Error(data.error || 'Server error');
+                }
+
+                const stats = await res.json();
+
+                document.getElementById('loadingState').style.display = 'none';
+                document.getElementById('dashboard').style.display = 'block';
+
+                document.getElementById('statUsersTotal').textContent = stats.users.total;
+                document.getElementById('statAdmins').textContent = stats.users.admins;
+
+                document.getElementById('statCarsTotal').textContent = stats.cars.total;
+                document.getElementById('statCarsAvailable').textContent = stats.cars.available;
+                document.getElementById('statCarsRented').textContent = stats.cars.rented;
+
+                document.getElementById('statBookingsTotal').textContent = stats.bookings.total;
+                
+                // Format currency
+                const formattedRevenue = new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(stats.bookings.revenue);
+                document.getElementById('statRevenue').textContent = formattedRevenue;
+
+            } catch (err) {
+                document.getElementById('loadingState').style.display = '';
+                document.getElementById('loadingState').innerHTML = `<div class="icon">❌</div><p>Lỗi tải dữ liệu: ${err.message}</p>`;
+                showAlert('Lỗi tải dữ liệu: ' + err.message);
+            }
+        }
+
+        loadStats();
+    })();
+</script>
+
+<%- include('../partials/footer') %>

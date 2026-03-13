@@ -19,40 +19,46 @@
     }
 
     :root {
-      --bg: #0f1117;
-      --surface: #1a1d27;
-      --surface2: #22263a;
-      --border: #2e3350;
-      --accent: #6c63ff;
-      --accent2: #a78bfa;
+      --bg: #0b1120;
+      --surface: rgba(30, 41, 59, 0.6);
+      --surface2: rgba(51, 65, 85, 0.7);
+      --border: rgba(255, 255, 255, 0.1);
+      --accent: #3b82f6;
+      --accent2: #8b5cf6;
       --success: #10b981;
       --warning: #f59e0b;
       --danger: #ef4444;
-      --text: #e2e8f0;
+      --text: #f8fafc;
       --muted: #94a3b8;
-      --radius: 12px;
+      --radius: 16px;
     }
 
     body {
       font-family: 'Inter', sans-serif;
       background: var(--bg);
+      background-image: 
+        radial-gradient(at 0% 0%, rgba(59, 130, 246, 0.15) 0px, transparent 50%),
+        radial-gradient(at 100% 100%, rgba(139, 92, 246, 0.15) 0px, transparent 50%);
+      background-attachment: fixed;
       color: var(--text);
       min-height: 100vh;
     }
 
     /* ── Navbar ── */
     nav {
-      background: var(--surface);
+      background: rgba(15, 23, 42, 0.8);
       border-bottom: 1px solid var(--border);
       padding: 0 2rem;
       display: flex;
       align-items: center;
       gap: 2rem;
-      height: 64px;
+      height: 72px;
       position: sticky;
       top: 0;
       z-index: 100;
-      backdrop-filter: blur(12px);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
     }
 
     .nav-brand {
@@ -191,6 +197,13 @@
       border: 1px solid var(--border);
       border-radius: var(--radius);
       overflow: hidden;
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+      transition: transform 0.2s;
+    }
+    .card:hover {
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
     }
 
     /* ── Table ── */
@@ -354,7 +367,16 @@
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: var(--radius);
-      padding: 1.25rem 1.5rem;
+      padding: 1.5rem 1.75rem;
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    
+    .stat-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
     }
 
     .stat-card .label {
@@ -433,7 +455,7 @@
             ? '<span style="background:rgba(108,99,255,.2);color:var(--accent2);padding:.2rem .6rem;border-radius:999px;font-size:.72rem;font-weight:700">ADMIN</span>'
             : '<span style="background:rgba(16,185,129,.1);color:var(--success);padding:.2rem .6rem;border-radius:999px;font-size:.72rem;font-weight:700">USER</span>';
           const adminLink = isAdmin
-            ? '<a href="/admin/users" class="btn btn-ghost btn-sm">⚙️ Users</a>'
+            ? '<a href="/admin/stats" class="btn btn-ghost btn-sm">📊 Thống kê</a> <a href="/admin/users" class="btn btn-ghost btn-sm">⚙️ Users</a>'
             : '';
           area.innerHTML = badge +
             '<span style="font-size:.85rem;color:var(--text);font-weight:600">' + u.username + '</span>' +

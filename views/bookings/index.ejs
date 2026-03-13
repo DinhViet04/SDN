@@ -33,6 +33,10 @@
             <p id="errorMsg">Không thể tải bookings.</p>
         </div>
 
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem; gap:1rem; flex-wrap:wrap;">
+            <input type="text" id="searchInput" placeholder="🔍 Tìm kiếm tên khách hàng, biển số xe..." style="padding:0.75rem 1rem; border-radius:12px; border:1px solid var(--border); background:var(--surface); color:var(--text); width:100%; max-width:400px; outline:none;" onkeyup="filterBookings()">
+        </div>
+
         <!-- Table -->
         <div class="card" id="tableCard" style="display:none">
             <div id="emptyState" class="empty-state" style="display:none">
@@ -82,63 +86,19 @@
                         return window.location.replace('/auth/login');
                     }
 
-                    const bookings = await res.json();
+                    window.allBookings = await res.json();
 
                     document.getElementById('loadingState').style.display = 'none';
                     document.getElementById('tableCard').style.display = '';
                     document.getElementById('statsRow').style.display = '';
 
                     // Stats
-                    const totalAmt = bookings.reduce((s, b) => s + b.totalAmount, 0);
-                    document.getElementById('statTotal').textContent = bookings.length;
+                    const totalAmt = window.allBookings.reduce((s, b) => s + b.totalAmount, 0);
+                    document.getElementById('statTotal').textContent = window.allBookings.length;
                     document.getElementById('statRevenue').textContent =
                         '₫' + totalAmt.toLocaleString('vi-VN');
 
-                    if (bookings.length === 0) {
-                        document.getElementById('emptyState').style.display = '';
-                        return;
-                    }
-
-                    document.getElementById('bookingsTable').style.display = '';
-                    const tbody = document.getElementById('bookingsBody');
-
-                    bookings.forEach(b => {
-                        const start = new Date(b.startDate);
-                        const end = new Date(b.endDate);
-                        const days = Math.ceil((end - start) / 86400000);
-                        const fmtDate = d => d.toLocaleDateString('vi-VN');
-
-                        // User info for admin
-                        const userInfo = b.userId
-                            ? (b.userId.username || '—') + ' <span style="color:var(--muted);font-size:.78rem">(' + (b.userId.email || '') + ')</span>'
-                            : '<span style="color:var(--muted)">legacy</span>';
-
-                        const adminCell = isAdmin
-                            ? `<td class="admin-col">${userInfo}</td>`
-                            : '';
-
-                        tbody.insertAdjacentHTML('beforeend', `
-                <tr>
-                    ${adminCell}
-                    <td><strong>${b.customerName}</strong></td>
-                    <td>${b.carNumber}</td>
-                    <td>${fmtDate(start)}</td>
-                    <td>${fmtDate(end)}</td>
-                    <td>${days} ngày</td>
-                    <td><span class="amount">₫${b.totalAmount.toLocaleString('vi-VN')}</span></td>
-                    <td>
-                        <div class="td-actions">
-                            <a href="/bookings/${b._id}/edit" class="btn btn-warning btn-sm">✏️ Edit</a>
-                            <form method="POST" action="/bookings/${b._id}?_method=DELETE"
-                                onsubmit="return confirm('Delete this booking?')">
-                                <input type="hidden" name="_method" value="DELETE"/>
-                                <button type="submit" class="btn btn-danger btn-sm">🗑 Delete</button>
-                            </form>
-                        </div>
-                    </td>
-                </tr>
-            `);
-                    });
+                    renderTable(window.allBookings);
 
                 } catch (err) {
                     document.getElementById('loadingState').style.display = 'none';
@@ -146,6 +106,69 @@
                     document.getElementById('errorMsg').textContent = 'Lỗi: ' + err.message;
                 }
             })();
+
+            function filterBookings() {
+                const term = document.getElementById('searchInput').value.toLowerCase();
+                const filtered = window.allBookings.filter(b => {
+                    const cust = (b.customerName || '').toLowerCase();
+                    const car = (b.carNumber || '').toLowerCase();
+                    return cust.includes(term) || car.includes(term);
+                });
+                renderTable(filtered);
+            }
+
+            function renderTable(bookingsList) {
+                const tbody = document.getElementById('bookingsBody');
+                tbody.innerHTML = '';
+                
+                if (bookingsList.length === 0) {
+                    document.getElementById('emptyState').style.display = '';
+                    document.getElementById('bookingsTable').style.display = 'none';
+                    return;
+                }
+                
+                document.getElementById('emptyState').style.display = 'none';
+                document.getElementById('bookingsTable').style.display = '';
+                const user = JSON.parse(localStorage.getItem('user') || '{}');
+                const isAdmin = user.role === 'admin';
+
+                bookingsList.forEach(b => {
+                    const start = new Date(b.startDate);
+                    const end = new Date(b.endDate);
+                    const days = Math.ceil((end - start) / 86400000);
+                    const fmtDate = d => d.toLocaleDateString('vi-VN');
+
+                    const userInfo = b.userId
+                        ? (b.userId.username || '—') + ' <span style="color:var(--muted);font-size:.78rem">(' + (b.userId.email || '') + ')</span>'
+                        : '<span style="color:var(--muted)">legacy</span>';
+
+                    const adminCell = isAdmin
+                        ? `<td class="admin-col">${userInfo}</td>`
+                        : '';
+
+                    tbody.insertAdjacentHTML('beforeend', `
+            <tr>
+                ${adminCell}
+                <td><strong>${b.customerName}</strong></td>
+                <td>${b.carNumber}</td>
+                <td>${fmtDate(start)}</td>
+                <td>${fmtDate(end)}</td>
+                <td>${days} ngày</td>
+                <td><span class="amount">₫${b.totalAmount.toLocaleString('vi-VN')}</span></td>
+                <td>
+                    <div class="td-actions">
+                        <a href="/bookings/${b._id}/edit" class="btn btn-warning btn-sm">✏️ Edit</a>
+                        <form method="POST" action="/bookings/${b._id}?_method=DELETE"
+                            onsubmit="return confirm('Delete this booking?')">
+                            <input type="hidden" name="_method" value="DELETE"/>
+                            <button type="submit" class="btn btn-danger btn-sm">🗑 Delete</button>
+                        </form>
+                    </div>
+                </td>
+            </tr>
+        `);
+                });
+            }
         </script>
 
         <%- include('../partials/footer') %>

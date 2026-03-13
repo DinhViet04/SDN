@@ -34,6 +34,7 @@ const bookingRoutes = require('./routes/bookingRoutes');
 const apiCarRoutes = require('./routes/apiCarRoutes');
 const apiBookingRoutes = require('./routes/apiBookingRoutes');
 const authRoutes = require('./routes/authRoutes');
+const apiAdminRoutes = require('./routes/apiAdminRoutes');
 
 // View routes
 app.get('/', (req, res) => res.render('index', { title: 'Home' }));
@@ -46,11 +47,13 @@ app.get('/auth/register', (req, res) => res.render('auth/register', { title: 'Đ
 
 // Admin view routes
 app.get('/admin/users', (req, res) => res.render('admin/users', { title: 'Quản lý Users' }));
+app.get('/admin/stats', (req, res) => res.render('admin/stats', { title: 'Thống kê' }));
 
 // REST API routes (JSON)
 app.use('/api/auth', authRoutes);
 app.use('/api/cars', apiCarRoutes);
 app.use('/api/bookings', apiBookingRoutes);
+app.use('/api/admin', apiAdminRoutes);
 
 // ── MongoDB Connection ───────────────────────────────────────────────────────
 const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/viet_car_rental';

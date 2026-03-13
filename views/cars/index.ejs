@@ -41,6 +41,16 @@
                 </div>
             </div>
 
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem; gap:1rem; flex-wrap:wrap;">
+                <input type="text" id="searchInput" placeholder="🔍 Tìm kiếm biển số, tính năng..." style="padding:0.75rem 1rem; border-radius:12px; border:1px solid var(--border); background:var(--surface); color:var(--text); width:100%; max-width:400px; outline:none;" onkeyup="filterCars()">
+                <select id="statusFilter" style="padding:0.75rem 1rem; border-radius:12px; border:1px solid var(--border); background:var(--surface); color:var(--text); outline:none;" onchange="filterCars()">
+                    <option value="">Tất cả trạng thái</option>
+                    <option value="available">Sẵn sàng (available)</option>
+                    <option value="rented">Đang thuê (rented)</option>
+                    <option value="maintenance">Bảo trì (maintenance)</option>
+                </select>
+            </div>
+
             <div class="card">
                 <% if (cars.length===0) { %>
                     <div class="empty-state">
@@ -62,7 +72,7 @@
                             </thead>
                             <tbody>
                                 <% cars.forEach(car=> { %>
-                                    <tr>
+                                    <tr class="car-row" data-status="<%= car.status %>" data-search="<%= car.carNumber.toLowerCase() %> <%= car.features.join(' ').toLowerCase() %>">
                                         <td><strong>
                                                 <%= car.carNumber %>
                                             </strong></td>
@@ -111,6 +121,26 @@
                         document.querySelectorAll('.user-only').forEach(el => el.style.display = 'none');
                     }
                 })();
+
+                function filterCars() {
+                    let searchVal = document.getElementById('searchInput').value.toLowerCase();
+                    let statusVal = document.getElementById('statusFilter').value;
+                    let rows = document.querySelectorAll('.car-row');
+
+                    rows.forEach(row => {
+                        let rowSearch = row.getAttribute('data-search') || '';
+                        let rowStatus = row.getAttribute('data-status') || '';
+                        
+                        let matchSearch = rowSearch.includes(searchVal);
+                        let matchStatus = statusVal === '' || rowStatus === statusVal;
+
+                        if (matchSearch && matchStatus) {
+                            row.style.display = '';
+                        } else {
+                            row.style.display = 'none';
+                        }
+                    });
+                }
             </script>
 
             <%- include('../partials/footer') %>

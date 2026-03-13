@@ -1,13 +1,50 @@
 <%- include('partials/header', { title: 'Home' }) %>
     <%- include('partials/requireAuth') %>
 
-        <div style="text-align:center; padding: 5rem 2rem;">
-            <div style="font-size:4rem; margin-bottom:1rem;">🚗</div>
-            <h1 style="font-size:2rem; font-weight:700; margin-bottom:0.75rem;">Viet Car Rental</h1>
-            <p style="color:var(--muted); margin-bottom:2rem;">Manage your fleet and bookings with ease.</p>
-            <div style="display:flex; gap:1rem; justify-content:center;">
-                <a href="/cars" class="btn btn-primary">🚙 View Cars</a>
-                <a href="/bookings" class="btn btn-ghost">📋 View Bookings</a>
+        <div style="position:relative; margin-bottom: 4rem;">
+            <!-- Hero content -->
+            <div class="hero" style="position:relative; overflow:hidden; border-radius: var(--radius); padding: 5rem 2rem; text-align:center; background: rgba(30, 41, 59, 0.4); border: 1px solid var(--border); box-shadow: 0 20px 40px rgba(0,0,0,0.2); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);">
+                <!-- Animated Background Blobs -->
+                <div style="position:absolute; top:-20%; left:-10%; width:400px; height:400px; background:var(--accent); filter:blur(100px); opacity:0.15; border-radius:50%; z-index:0; animation: float 6s ease-in-out infinite;"></div>
+                <div style="position:absolute; bottom:-20%; right:-10%; width:300px; height:300px; background:var(--accent2); filter:blur(100px); opacity:0.15; border-radius:50%; z-index:0; animation: float 8s ease-in-out infinite reverse;"></div>
+                
+                <style>
+                    @keyframes float {
+                        0% { transform: translateY(0px) rotate(0deg); }
+                        50% { transform: translateY(30px) rotate(10deg); }
+                        100% { transform: translateY(0px) rotate(0deg); }
+                    }
+                </style>
+                
+                <div style="position:relative; z-index:1;">
+                    <div style="font-size:4rem; margin-bottom:1rem; text-shadow: 0 10px 20px rgba(0,0,0,0.3);">🚀</div>
+                    <h1 style="font-size:3.5rem; font-weight:800; margin-bottom:1rem; letter-spacing:-0.02em; background: -webkit-linear-gradient(135deg, #60a5fa 0%, #d8b4fe 100%); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;">Viet Car Rental</h1>
+                    <p style="color:var(--text); font-size: 1.15rem; font-weight:300; margin-bottom:2.5rem; max-width:600px; margin-left:auto; margin-right:auto; opacity:0.9;">Hệ thống cho thuê xe cao cấp. Trải nghiệm hành trình của bạn với những người đồng hành tuyệt vời nhất.</p>
+                    <div style="display:flex; gap:1rem; justify-content:center; flex-wrap:wrap;">
+                        <a href="/cars" class="btn btn-primary" style="padding: 0.8rem 1.8rem; font-size: 1.05rem; box-shadow: 0 10px 20px -10px var(--accent); transition: all 0.3s; gap:0.5rem;">🚙 Khám phá xe</a>
+                        <a href="/bookings" class="btn btn-ghost" style="padding: 0.8rem 1.8rem; font-size: 1.05rem; background: rgba(255,255,255,0.05); transition: all 0.3s;">📋 Lịch sử đặt xe</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Features Section -->
+        <h2 style="text-align:center; font-size:1.8rem; margin-bottom:2rem; font-weight:700;">Dịch vụ nổi bật</h2>
+        <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; margin-bottom: 4rem;">
+            <div class="stat-card" style="text-align:center;">
+                <div style="font-size:2.5rem; margin-bottom:1rem;">⚡</div>
+                <h3 style="font-size:1.2rem; margin-bottom:0.5rem; font-weight:600; color:var(--text);">Đặt xe siêu tốc</h3>
+                <p style="color:var(--muted); font-size:0.9rem; line-height:1.5;">Thủ tục trực tuyến chỉ với vài thao tác. Tiết kiệm thời gian, nhận xe ngay.</p>
+            </div>
+            <div class="stat-card" style="text-align:center; border-color: rgba(139, 92, 246, 0.3);">
+                <div style="font-size:2.5rem; margin-bottom:1rem;">🛡️</div>
+                <h3 style="font-size:1.2rem; margin-bottom:0.5rem; font-weight:600; color:var(--text);">An toàn tuyệt đối</h3>
+                <p style="color:var(--muted); font-size:0.9rem; line-height:1.5;">100% xe được bảo dưỡng và kiểm định định kỳ, sẵn sàng phục vụ hành trình dài.</p>
+            </div>
+            <div class="stat-card" style="text-align:center;">
+                <div style="font-size:2.5rem; margin-bottom:1rem;">💰</div>
+                <h3 style="font-size:1.2rem; margin-bottom:0.5rem; font-weight:600; color:var(--text);">Giá cả minh bạch</h3>
+                <p style="color:var(--muted); font-size:0.9rem; line-height:1.5;">Cập nhật giá thuê theo ngày rõ ràng, không có bất kỳ chi phí ẩn nào khác.</p>
             </div>
         </div>
 
