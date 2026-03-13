@@ -3,10 +3,10 @@
 
         <div class="page-header">
             <div>
-                <h1>🚙 Car Fleet</h1>
-                <p>Manage all vehicles in the system</p>
+                <h1>🚙 Danh sách xe</h1>
+                <p>Xem và quản lý tất cả xe trong hệ thống</p>
             </div>
-            <a href="/cars/new" class="btn btn-primary admin-only" style="display:none">＋ Add New Car</a>
+            <a href="/cars/new" class="btn btn-primary admin-only" style="display:none; border-radius:12px;">＋ Thêm xe mới</a>
         </div>
 
         <% const available=cars.filter(c=> c.status === 'available').length;

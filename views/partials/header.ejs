@@ -434,11 +434,12 @@
 
   <nav>
     <a class="nav-brand" href="/"><span>🚗</span> CarRental</a>
+    <% if (title !== 'Đăng nhập' && title !== 'Đăng ký') { %>
     <div class="nav-links">
-      <a href="/cars" class="<%= title && title.toLowerCase().includes('car') ? 'active' : '' %>">🚙 Cars</a>
-      <a href="/bookings" class="<%= title && title.toLowerCase().includes('booking') ? 'active' : '' %>">📋
-        Bookings</a>
+      <a href="/cars" class="<%= title && title.toLowerCase().includes('car') ? 'active' : '' %>">🚙 Khám phá xe</a>
+      <a href="/bookings" class="<%= title && title.toLowerCase().includes('booking') ? 'active' : '' %>">📋 Lịch sử đặt xe</a>
     </div>
+    <% } %>
     <!-- Auth nav — rendered by JS based on localStorage -->
     <div id="navAuthArea" style="margin-left:auto; display:flex; align-items:center; gap:.6rem;"></div>
   </nav>
